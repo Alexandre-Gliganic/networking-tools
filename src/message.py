@@ -3,14 +3,13 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions, CheckFailure
 import yaml
 
-from src.ping import ping
-from src.traceroute import traceroute
-from src.traceroute6 import traceroute6
-from src.whois import whois
-from src.dig import dig
-from src.host import host
-from src.help import help
-import asyncio
+from src.tools.ping import ping
+from src.tools.traceroute import traceroute
+from src.tools.traceroute6 import traceroute6
+from src.tools.whois import whois
+from src.tools.dig import dig
+from src.tools.host import host
+from src.tools.help import help
 
 class OnMessage:
     @staticmethod
