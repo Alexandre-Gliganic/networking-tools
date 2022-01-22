@@ -4,8 +4,7 @@ FROM python:3.10
 
 WORKDIR /app
 
-COPY requierements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+RUN  pip3 install git+https://github.com/Rapptz/discord.py.git@master
 COPY . .
 
 CMD ["python3", "network.py" ]
