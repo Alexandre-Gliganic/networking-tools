@@ -16,7 +16,6 @@ async def execute_prog(cmd: str,timeout: int = 10):
 
 
 async def execute_prog_realtime(cmd: str,timeout: int = 10,msg: discord.Message = None):
-    print(cmd)
     process = await asyncio.create_subprocess_shell(f"timeout {timeout} {cmd}", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
     start_msg = msg.content + "```py\n"
     new_msg = ""
