@@ -2,6 +2,7 @@ import discord
 import re
 import asyncio
 from src.tools.process import *
+from src.tools.error import *
 
 
 regex_ipv6="(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
@@ -65,7 +66,7 @@ async def ping(ctx,args):
     msg = await ctx.channel.send(f"```py\nPing for {domain} with IPv{version} in progress ...```")
 
     try:
-        id_code = await execute_prog_realtime(f"ping -{4 if version == 4 else 6} -c 5 {domain}", 8, msg)
+        await execute_prog_realtime(f"ping -{4 if version == 4 else 6} -c 5 {domain}", 8, msg)
 
     except TimeoutError:
         print("Timeout")
@@ -73,8 +74,8 @@ async def ping(ctx,args):
         if ip_detect != 0:
             view.add_item(item=website)
         await ctx.channel.send(f"```py\nTimeout for {domain}```", view=view)
-        return
-    except TypeError as err:
+    except ErrorDuringProcess as err:
+        await ctx.channel.send(f":warning:**Error {err.code} occured during process for {domain}**:warning:", view=view)
         view.add_item(item=offline)
     else:
         view.add_item(item=online)
