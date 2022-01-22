@@ -26,6 +26,7 @@ class OnMessage:
         
         command = ctx.content.split(' ')[0][1:]
         args = ctx.content.split(' ')[1:]
+        
         match command:
             case 'ping':
                 await ping(ctx, args)
@@ -49,5 +50,4 @@ class OnMessage:
                 return
             case _ :
                 return
-            
             

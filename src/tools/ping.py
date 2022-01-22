@@ -1,10 +1,7 @@
 import discord
-from discord.ext import commands
-from discord.ext.commands import has_permissions, CheckFailure
-import os
-import subprocess
 import re
-import yaml
+import asyncio
+from src.tools.process import *
 
 
 regex_ipv6="(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
@@ -12,7 +9,7 @@ regex_ipv4="^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$"
 regex_url="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$"
 
 
-async def ping (ctx,args):
+async def ping(ctx,args):
     
     if len(args)==0 or len(args) >1:
         print("Missing Required Argument")
@@ -22,15 +19,15 @@ async def ping (ctx,args):
         return
     
     ip=args[0]
-    domaine=str(ip)
+    domain=str(ip)
     
     #Regex match 
     patternv6=re.compile(regex_ipv6)
-    res_patternv6=patternv6.match(domaine)
+    res_patternv6=patternv6.match(domain)
     patternv4=re.compile(regex_ipv4)
-    res_patternv4=patternv4.match(domaine)
+    res_patternv4=patternv4.match(domain)
     patternurl=re.compile(regex_url)
-    res_patternurl=patternurl.match(domaine)
+    res_patternurl=patternurl.match(domain)
 
 
     #print("V6 : ",res_patternv6) 
@@ -42,15 +39,15 @@ async def ping (ctx,args):
     #IPV6 detect
     if res_patternv6!=None:
         ip_detect=6
-        website = discord.ui.Button(style=discord.ButtonStyle.green, label=f"{domaine}", url=f"https://[{domaine}]")
+        website = discord.ui.Button(style=discord.ButtonStyle.green, label=f"{domain}", url=f"https://[{domain}]")
     #IPV4 detect
     elif res_patternv4!=None:
         ip_detect=4
-        website = discord.ui.Button(style=discord.ButtonStyle.green, label=f"{domaine}", url=f"https://[{domaine}]")
+        website = discord.ui.Button(style=discord.ButtonStyle.green, label=f"{domain}", url=f"https://[{domain}]")
     #Website detect
     elif res_patternurl!=None:
         ip_detect=42
-        website = discord.ui.Button(style=discord.ButtonStyle.green, label=f"{domaine}", url=f"https://{domaine}")
+        website = discord.ui.Button(style=discord.ButtonStyle.green, label=f"{domain}", url=f"https://{domain}")
     #else
     else:
         ip_detect = 0
@@ -65,33 +62,22 @@ async def ping (ctx,args):
     
         
     print("Ping for", ip, f"with IPv{version}", "request by", ctx.author.name,f"(ID = {ctx.author.id}).")
-    waiting1 = ("Ping for " + domaine +" with "+f"IPv{version}" )
-    await ctx.channel.send(f"```py\n{waiting1} in progress ...```")
-   
-        
-    try:
-        if (version == 6):
-            p = subprocess.run(["ping","-6", "-c", "5", domaine],capture_output=True, text=True, timeout=10)
-        else:
-            p = subprocess.run(["ping","-4", "-c", "5", domaine],capture_output=True, text=True, timeout=10)
+    msg = await ctx.channel.send(f"```py\nPing for {domain} with IPv{version} in progress ...```")
 
-    except subprocess.TimeoutExpired:
+    try:
+        id_code = await execute_prog_realtime(f"ping -{4 if version == 4 else 6} -c 5 {domain}", 8, msg)
+
+    except TimeoutError:
         print("Timeout")
         view.add_item(item=offline)
         if ip_detect != 0:
             view.add_item(item=website)
-        await ctx.channel.send(f"```py\nTimeout for {domaine}```", view=view)
+        await ctx.channel.send(f"```py\nTimeout for {domain}```", view=view)
         return
-
-    res = str(p.stdout)
-    err = p.stderr
-    
-
-    if len(err) == 0:
+    except TypeError as err:
+        view.add_item(item=offline)
+    else:
         view.add_item(item=online)
         if ip_detect != 0:
             view.add_item(item=website)
-        await ctx.channel.send(f"```py\n{res}```", view=view)
-    else:
-        view.add_item(item=offline)
-        await ctx.channel.send(f"```py\n{err}```", view=view)
+    await msg.edit(view=view)
