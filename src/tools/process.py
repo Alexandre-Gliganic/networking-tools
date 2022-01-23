@@ -1,39 +1,44 @@
 import asyncio
 import discord
+from src.tools.error import *
 async def execute_prog(cmd: str,timeout: int = 10):
-    
+    """
+    Execute a program and return the stdout and stderr as a tuple.
+    returns: (stdout,stderr)
+    """
     process = await asyncio.create_subprocess_shell(f"timeout {timeout} {cmd}", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
 
     stdout, stderr = await process.communicate()
     if process.returncode == 124: # timeout
         raise TimeoutError
     if process.returncode != 0:
-        raise TypeError(stderr.decode(),process.returncode)
+        raise ErrorDuringProcess(process.returncode)
     res=stdout.decode()
     err=stderr.decode()
 
-    return res,err,process.returncode
+    return res,err
 
 
 async def execute_prog_realtime(cmd: str,timeout: int = 10,msg: discord.Message = None):
+    """
+    Execute a program and edit the message in realtime.
+    """
     process = await asyncio.create_subprocess_shell(f"timeout {timeout} {cmd}", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
-    start_msg = msg.content + "```py\n"
-    new_msg = ""
+    msg1 = msg.content + "```py\n"
     
     while process.returncode is None:
         await asyncio.sleep(0.01)
         line = await process.stdout.readline()
         line = line.decode().strip()
         if line:
-            new_msg += line + "\n"
-            await msg.edit(content=start_msg + new_msg + "```")
+            msg1 += line + "\n"
+            await msg.edit(content=msg1 + "```")
 
     while line := await process.stdout.readline():
         line = line.decode().strip()
         if line:
-
-            new_msg += line + "\n"
-            await msg.edit(content=start_msg + new_msg + "```")
+            msg1 += line + "\n"
+            await msg.edit(content=msg1+ "```")
 
     if process.returncode == 124: # timeout
         raise TimeoutError
@@ -43,7 +48,5 @@ async def execute_prog_realtime(cmd: str,timeout: int = 10,msg: discord.Message 
             line = line.decode().strip()
             if line:
                 err += line + "\n"
-                await msg.edit(content=start_msg + new_msg + err + "```")
-        raise TypeError(process.returncode)
-    
-    return process.returncode
+                await msg.edit(content=msg1+ err + "```")
+        raise ErrorDuringProcess(process.returncode)
