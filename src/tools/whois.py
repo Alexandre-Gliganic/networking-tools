@@ -29,7 +29,7 @@ async def whois (ctx,args):
     except TimeoutError:
         print("Timeout")
         view.add_item(item=offline)
-        embed=discord.Embed(title="Timeout", description = f"Timeout for **{ip}**",color=0xFF0000)
+        embed=discord.Embed(title="Timeout", description = f"➜ Timeout for **{ip}**",color=0xFF0000)
         embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         await ctx.channel.send(embed=embed, view=view)
         return
@@ -47,6 +47,7 @@ async def whois (ctx,args):
             if not line.startswith('remarks:'): #remove comments
                 filter_res+=line+'\n'   
         
+        print(filter_res)
         find = filter_res.find("ERROR:101") #detect error101 for button
         if find == -1:
             view.add_item(item=online)
@@ -54,7 +55,7 @@ async def whois (ctx,args):
             return
             
         else:
-            embed=discord.Embed(title="Error", description = f":warning: **Error {err}** occured during process for **{ip}** :warning: \n\n **No entries found in source RIPE.** ",color=0xFF0000)
+            embed=discord.Embed(title="Error", description = f"➜ No entries found in source RIPE for **ip**. \n \n:warning: **Error {err}** occured during process for **{ip}** :warning: \n\n ",color=0xFF0000)
             embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
             view.add_item(item=offline)
             await msg2.delete()

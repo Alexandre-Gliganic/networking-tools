@@ -76,7 +76,7 @@ async def ping(ctx,args):
         if ip_detect != 0:
             view.add_item(item=website)
         await msg2.delete()
-        embed=discord.Embed(title="Timeout", description = f"Timeout for **{domain}**",color=0xFF0000)
+        embed=discord.Embed(title="Timeout", description = f"➜ Timeout for **{domain}**",color=0xFF0000)
         embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         await ctx.channel.send(embed=embed, view=view)
         return
@@ -86,7 +86,7 @@ async def ping(ctx,args):
             await msg2.delete()
         print(f"Error code: {err.code}")
         view.add_item(item=offline)
-        embed=discord.Embed(title="Error", description = f":warning: **Error {err.code}** occured during process for *{domain}* :warning: \n\n **{err.err if len(err.err) != 0 else '_ _'}**",color=0xFF0000)
+        embed=discord.Embed(title="Error", description = f"➜ {err.err if len(err.err) != 0 else '_ _'}:warning: **Error {err.code}** occured during process for *{domain}* :warning:",color=0xFF0000)
         embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         await ctx.channel.send(embed=embed, view=view)
         return

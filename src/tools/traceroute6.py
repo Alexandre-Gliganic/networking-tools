@@ -29,7 +29,7 @@ async def traceroute6 (ctx,args):
     except TimeoutError:
         print("Timeout")
         view.add_item(item=offline)
-        embed=discord.Embed(title="Timeout", description = f"Timeout for **{ip}**",color=0xFF0000)
+        embed=discord.Embed(title="Timeout", description = f"➜ Timeout for **{ip}**",color=0xFF0000)
         embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         await ctx.channel.send(embed=embed, view=view)
         return
