@@ -21,7 +21,7 @@ async def traceroute6 (ctx,args):
     embed=discord.Embed(title="Traceroute6", description = f"Traceroute6 **{ip}** in progress ...",color=0x00FF00)
     embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
     await ctx.channel.send(embed=embed)
-    msg2= await ctx.channel.send("_ _")
+    msg2= await ctx.channel.send(":hourglass:")
 
     try:
         await execute_prog_realtime(f"traceroute6 {ip}", 20, msg2)
@@ -35,6 +35,7 @@ async def traceroute6 (ctx,args):
         return
     except ErrorDuringProcess as err:
         print(f"Error code: {err.code}")
+        await msg2.delete()
         embed=discord.Embed(title="Error", description = f":warning: **Error {err.code}** occured during process for **{ip}** :warning:",color=0xFF0000)
         embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         await ctx.channel.send(embed=embed, view=view)

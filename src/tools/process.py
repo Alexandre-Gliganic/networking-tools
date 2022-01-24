@@ -24,7 +24,6 @@ async def execute_prog_realtime(cmd: str,timeout: int = 10,msg: discord.Message 
     """
     Execute a program and edit the message in realtime.
     """
-
     process = await asyncio.create_subprocess_shell(f"timeout {timeout} {cmd}", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
     msg1 = "```py\n"
     
@@ -42,9 +41,7 @@ async def execute_prog_realtime(cmd: str,timeout: int = 10,msg: discord.Message 
             msg1 += line
             await msg.edit(content=msg1+ "```")
 
-
     if process.returncode == 124: # timeout
-        await msg.delete()
         raise TimeoutError
     if process.returncode != 0:
         err=""
@@ -52,6 +49,4 @@ async def execute_prog_realtime(cmd: str,timeout: int = 10,msg: discord.Message 
             line = line.decode()
             if line:
                 err += line + "\n"
-                #await msg.edit(content=msg1+ err + "```")
-                await msg.delete()
         raise ErrorDuringProcess(process.returncode,err)

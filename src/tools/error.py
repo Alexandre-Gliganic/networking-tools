@@ -1,6 +1,5 @@
 import errno
 
-
 class ErrorDuringProcess(Exception):
     def __init__(self,code: int,err: str, *args: object) -> None:
         self.code = code
