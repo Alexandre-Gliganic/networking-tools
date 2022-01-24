@@ -44,6 +44,7 @@ async def execute_prog_realtime(cmd: str,timeout: int = 10,msg: discord.Message 
 
 
     if process.returncode == 124: # timeout
+        await msg.delete()
         raise TimeoutError
     if process.returncode != 0:
         err=""
@@ -51,5 +52,6 @@ async def execute_prog_realtime(cmd: str,timeout: int = 10,msg: discord.Message 
             line = line.decode()
             if line:
                 err += line + "\n"
-                await msg.edit(content=msg1+ err + "```")
-        raise ErrorDuringProcess(process.returncode)
+                #await msg.edit(content=msg1+ err + "```")
+                await msg.delete()
+        raise ErrorDuringProcess(process.returncode,err)

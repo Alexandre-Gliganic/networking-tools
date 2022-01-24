@@ -65,22 +65,24 @@ async def ping(ctx,args):
     embed=discord.Embed(title="Ping", description = f"Ping for **{domain}** with **IPv{version}** in progress ...",color=0x00FF00)
     embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
     await ctx.channel.send(embed=embed)
-    msg2= await ctx.channel.send("_ _")
+    msg2= await ctx.channel.send(":hourglass:")
 
     try:
         await execute_prog_realtime(f"ping -{4 if version == 4 else 6} -c 5 {domain}", 8, msg2)
-
+       
     except TimeoutError:
         print("Timeout")
         view.add_item(item=offline)
         if ip_detect != 0:
             view.add_item(item=website)
-        await ctx.channel.send(f"```py\nTimeout for {domain}```", view=view)
+        embed=discord.Embed(title="Timeout", description = f"Timeout for **{domain}**",color=0xFF0000)
+        embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
+        await ctx.channel.send(embed=embed, view=view)
         return
     except ErrorDuringProcess as err:
         print(f"Error code: {err.code}")
         view.add_item(item=offline)
-        embed=discord.Embed(title="Error", description = f":warning: **Error {err.code} occured during process for {domain}** :warning:",color=0xFF0000)
+        embed=discord.Embed(title="Error", description = f":warning: **Error {err.code}** occured during process for *{domain}* :warning: \n\n **{err.err}**",color=0xFF0000)
         embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         await ctx.channel.send(embed=embed, view=view)
         return

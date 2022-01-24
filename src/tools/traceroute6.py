@@ -35,7 +35,7 @@ async def traceroute6 (ctx,args):
         return
     except ErrorDuringProcess as err:
         print(f"Error code: {err.code}")
-        embed=discord.Embed(title="Error", description = f":warning: **Error {err.code} occured during process for {ip}** :warning:",color=0xFF0000)
+        embed=discord.Embed(title="Error", description = f":warning: **Error {err.code}** occured during process for **{ip}** :warning:",color=0xFF0000)
         embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         await ctx.channel.send(embed=embed, view=view)
         view.add_item(item=offline)
