@@ -3,7 +3,7 @@
 FROM ubuntu:latest
 RUN apt update
 RUN apt upgrade -y
-RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install tzdata -y
+RUN TZ=Etc/UTC apt install tzdata -y
 RUN apt install python3-pip git wget curl software-properties-common -y
 RUN add-apt-repository ppa:deadsnakes/ppa -y
 RUN apt install python3.10 -y
