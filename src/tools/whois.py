@@ -1,45 +1,63 @@
 import discord
-import subprocess
+from src.tools.process import *
+from src.tools.error import *
 
 async def whois (ctx,args):
     
-    if len(args)==0 or len(args) >1:
+    if len(args) != 1 :
         print("Missing Required Argument")
         embed=discord.Embed(title="Error", description = "Missing Required Argument. \n \n You should use the **whois** command with IPv4 or IPv6 like this : \n \n IPv4:\n`.whois 1.1.1.1`\n IPv6: \n`.whois 2606:4700:4700::1111`",color=0xFF0000)
-        embed.set_thumbnail(url="https://discord.bots.gg/img/logo_transparent.png")
+        embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         await ctx.channel.send(embed=embed)
         return
     
     ip=args[0]
     print("Whois for", ip, "request by", ctx.author.name,f"(ID = {ctx.author.id}).")
-    domaine=str(ip)
-
+    
     view = discord.ui.View()    
     offline = discord.ui.Button(style=discord.ButtonStyle.red, label="Offline")
     online = discord.ui.Button(style=discord.ButtonStyle.green, label="Online")
     
+    embed=discord.Embed(title="Whois", description = f"Whois **{ip}** in progress ...",color=0x00FF00)
+    embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
+    await ctx.channel.send(embed=embed)
+    msg2= await ctx.channel.send(":hourglass:")
 
-    waiting1 = ("Whois " + domaine)
-    await ctx.channel.send(f"```py\n{waiting1} in progress ...```")
-        
     try:
-        p = subprocess.run(["whois","-r", domaine],capture_output=True, text=True, timeout=10)
-        
+        res,err=await execute_prog(f"whois -r {ip}", 10)
 
-    except subprocess.TimeoutExpired:
+    except TimeoutError:
         print("Timeout")
         view.add_item(item=offline)
-        await ctx.channel.send(f"```py\nTimeout for {domaine}```", view=view)
+        embed=discord.Embed(title="Timeout", description = f"Timeout for **{ip}**",color=0xFF0000)
+        embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
+        await ctx.channel.send(embed=embed, view=view)
         return
-
-   
-    res = str(p.stdout)
-    err = p.stderr
-
-    find = res.find("ERROR:101")
-    if find == -1:
-        view.add_item(item=online)
-        await ctx.channel.send(f"```py\n{res}```", view=view)
-    else:
+    except ErrorDuringProcess as err:
+        print(f"Error code: {err.code}")
+        await msg2.delete()
+        embed=discord.Embed(title="Error", description = f":warning: **Error {err.code}** occured during process for **{ip}** :warning:",color=0xFF0000)
+        embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
+        await ctx.channel.send(embed=embed, view=view)
         view.add_item(item=offline)
-        await ctx.channel.send(f"```py\n{res}```", view=view)
+        return
+    else:
+        filter_res = ""
+        for line in res.splitlines()[9:]: #remove the 10 lines of information whois function 
+            if not line.startswith('remarks:'): #remove comments
+                filter_res+=line+'\n'   
+        
+        find = filter_res.find("ERROR:101") #detect error101 for button
+        if find == -1:
+            view.add_item(item=online)
+            await msg2.edit(f"```py\n{filter_res}```",view=view)
+            return
+            
+        else:
+            embed=discord.Embed(title="Error", description = f":warning: **Error {err}** occured during process for **{ip}** :warning: \n\n **No entries found in source RIPE.** ",color=0xFF0000)
+            embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
+            view.add_item(item=offline)
+            await msg2.delete()
+            await ctx.channel.send(embed=embed,view=view)
+            return
+            

@@ -24,7 +24,7 @@ async def traceroute (ctx,args):
     msg2= await ctx.channel.send(":hourglass:")
 
     try:
-        await execute_prog_realtime(f"traceroute {ip}", 20, msg2)
+        await execute_prog(f"traceroute {ip}", 20, msg2)
 
     except TimeoutError:
         print("Timeout")

@@ -10,13 +10,12 @@ async def execute_prog(cmd: str,timeout: int = 10):
     process = await asyncio.create_subprocess_shell(f"timeout {timeout} {cmd}", stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
 
     stdout, stderr = await process.communicate()
+    err=stderr.decode()
     if process.returncode == 124: # timeout
         raise TimeoutError
     if process.returncode != 0:
-        raise ErrorDuringProcess(process.returncode)
+        raise ErrorDuringProcess(process.returncode,err)
     res=stdout.decode()
-    err=stderr.decode()
-
     return res,err
 
 

@@ -82,7 +82,8 @@ async def ping(ctx,args):
         return
     
     except ErrorDuringProcess as err:
-        await msg2.delete()
+        if err.code!=1:
+            await msg2.delete()
         print(f"Error code: {err.code}")
         view.add_item(item=offline)
         embed=discord.Embed(title="Error", description = f":warning: **Error {err.code}** occured during process for *{domain}* :warning: \n\n **{err.err if len(err.err) != 0 else '_ _'}**",color=0xFF0000)
