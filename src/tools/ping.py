@@ -1,6 +1,5 @@
 import discord
 import re
-import asyncio
 from src.tools.process import *
 from src.tools.error import *
 
@@ -15,7 +14,7 @@ async def ping(ctx,args):
     if len(args)==0 or len(args) >1:
         print("Missing Required Argument")
         embed=discord.Embed(title="Error", description = "Missing Required Argument. \n \n You should use the **ping** command with domain or IPv4 or IPv6 like this : \n \n Domain: \n`.ping google.com` \n IPv4:\n`.ping 1.1.1.1`\n IPv6: \n`.ping 2606:4700:4700::1111`",color=0xFF0000)
-        embed.set_thumbnail(url="https://discord.bots.gg/img/logo_transparent.png")
+        embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         await ctx.channel.send(embed=embed)
         return
     
@@ -63,10 +62,13 @@ async def ping(ctx,args):
     
         
     print("Ping for", ip, f"with IPv{version}", "request by", ctx.author.name,f"(ID = {ctx.author.id}).")
-    msg = await ctx.channel.send(f"```py\nPing for {domain} with IPv{version} in progress ...```")
+    embed=discord.Embed(title="Ping", description = f"Ping for **{domain}** with **IPv{version}** in progress ...",color=0x00FF00)
+    embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
+    await ctx.channel.send(embed=embed)
+    msg2= await ctx.channel.send("_ _")
 
     try:
-        await execute_prog_realtime(f"ping -{4 if version == 4 else 6} -c 5 {domain}", 8, msg)
+        await execute_prog_realtime(f"ping -{4 if version == 4 else 6} -c 5 {domain}", 8, msg2)
 
     except TimeoutError:
         print("Timeout")
@@ -74,11 +76,16 @@ async def ping(ctx,args):
         if ip_detect != 0:
             view.add_item(item=website)
         await ctx.channel.send(f"```py\nTimeout for {domain}```", view=view)
+        return
     except ErrorDuringProcess as err:
-        await ctx.channel.send(f":warning:**Error {err.code} occured during process for {domain}**:warning:", view=view)
+        print(f"Error code: {err.code}")
         view.add_item(item=offline)
+        embed=discord.Embed(title="Error", description = f":warning: **Error {err.code} occured during process for {domain}** :warning:",color=0xFF0000)
+        embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
+        await ctx.channel.send(embed=embed, view=view)
+        return
     else:
         view.add_item(item=online)
         if ip_detect != 0:
             view.add_item(item=website)
-    await msg.edit(view=view)
+    await msg2.edit(view=view)

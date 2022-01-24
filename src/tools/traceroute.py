@@ -1,45 +1,45 @@
 import discord
-import subprocess
+from src.tools.process import *
+from src.tools.error import *
 
 async def traceroute (ctx,args):
     
-    if len(args)==0 or len(args) >1:
+    if len(args) != 1 :
         print("Missing Required Argument")
         embed=discord.Embed(title="Error", description = "Missing Required Argument. \n \n You should use the **traceroute** command with domain or IPv4 or IPv6 like this : \n \n Domain: \n`.traceroute google.com` \n IPv4:\n`.traceroute 1.1.1.1`\n IPv6: \n`.traceroute 2606:4700:4700::1111`",color=0xFF0000)
-        embed.set_thumbnail(url="https://discord.bots.gg/img/logo_transparent.png")
+        embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         await ctx.channel.send(embed=embed)
         return
     
     ip=args[0]
     print("Traceroute for", ip, "request by", ctx.author.name,f"(ID = {ctx.author.id}).")
-    domaine=str(ip)
 
     view = discord.ui.View()    
     offline = discord.ui.Button(style=discord.ButtonStyle.red, label="Offline")
     online = discord.ui.Button(style=discord.ButtonStyle.green, label="Online")
     
+    embed=discord.Embed(title="Traceroute", description = f"Traceroute **{ip}** in progress ...",color=0x00FF00)
+    embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
+    await ctx.channel.send(embed=embed)
+    msg2= await ctx.channel.send("_ _")
 
-    waiting1 = ("Traceroute for " + domaine)
-    await ctx.channel.send(f"```py\n{waiting1} in progress ...```")
-        
     try:
-        
-        p = subprocess.run(["traceroute", domaine],capture_output=True, text=True, timeout=20)
-        
+        await execute_prog_realtime(f"traceroute {ip}", 20, msg2)
 
-    except subprocess.TimeoutExpired:
+    except TimeoutError:
         print("Timeout")
         view.add_item(item=offline)
-        await ctx.channel.send(f"```py\nTimeout for {domaine}```", view=view)
+        embed=discord.Embed(title="Timeout", description = f"Timeout for **{ip}**",color=0xFF0000)
+        embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
+        await ctx.channel.send(embed=embed, view=view)
         return
-
-   
-    res = str(p.stdout)
-    err = p.stderr
-
-    if len(err) == 0:
-        view.add_item(item=online)
-        await ctx.channel.send(f"```py\n{res}```", view=view)
-    else:
+    except ErrorDuringProcess as err:
+        print(f"Error code: {err.code}")
+        embed=discord.Embed(title="Error", description = f":warning: **Error {err.code} occured during process for {ip}** :warning:",color=0xFF0000)
+        embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
+        await ctx.channel.send(embed=embed, view=view)
         view.add_item(item=offline)
-        await ctx.channel.send(f"```py\n{err}```", view=view)
+        return
+    else:
+        view.add_item(item=online)
+    await msg2.edit(view=view)
