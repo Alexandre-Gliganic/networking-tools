@@ -1,6 +1,7 @@
 import discord
 from src.tools.process import *
 from src.tools.error import *
+from src.tools.regex import whatis
 
 async def whois (ctx,args):
     
@@ -22,9 +23,20 @@ async def whois (ctx,args):
     embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
     await ctx.channel.send(embed=embed)
     msg2= await ctx.channel.send(":hourglass:")
+    
+    
+    version=await whatis(ip)
+    print(version)
+    if version=="v4" or version == "v6" or version == "AS":
+        flag="-r"
+    elif version == "url":
+        return
+    else:
+        return
+        
 
     try:
-        res,err=await execute_prog(f"whois -r {ip}", 10)
+        res,err=await execute_prog(f"whois {flag} {ip}", 10)
 
     except TimeoutError:
         print("Timeout")
@@ -43,10 +55,10 @@ async def whois (ctx,args):
         return
     else:
         filter_res = ""
+        
         for line in res.splitlines()[9:]: #remove the 10 lines of information whois function 
             if not line.startswith('remarks:'): #remove comments
                 filter_res+=line+'\n'   
-        
         print(filter_res)
         find = filter_res.find("ERROR:101") #detect error101 for button
         if find == -1:
@@ -55,7 +67,7 @@ async def whois (ctx,args):
             return
             
         else:
-            embed=discord.Embed(title="Error", description = f"➜ No entries found in source RIPE for **ip**. \n \n:warning: **Error {err}** occured during process for **{ip}** :warning: \n\n ",color=0xFF0000)
+            embed=discord.Embed(title=f"Error", description = f"➜ No entries found in source RIPE for **{ip}**.",color=0xFF0000)
             embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
             view.add_item(item=offline)
             await msg2.delete()
