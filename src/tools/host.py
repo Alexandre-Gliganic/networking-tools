@@ -26,7 +26,7 @@ async def host (ctx,args):
     except ErrorDuringProcess as err:
         print(f"Error code: {err.code}")
         await msg2.delete()
-        await ctx.channel.send(embed=CompleteEmbed("Error {err.code}",f"➜ Host **{ip}** not found.",0xFF0000), view=simple_view("offline"))
+        await ctx.channel.send(embed=CompleteEmbed(f"Error {err.code}",f"➜ Host **{ip}** not found.",0xFF0000), view=simple_view("offline"))
         return
         
     else:
