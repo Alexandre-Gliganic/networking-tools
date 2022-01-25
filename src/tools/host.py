@@ -1,4 +1,3 @@
-import discord
 from src.process import *
 from src.error import *
 from src.embed import *
