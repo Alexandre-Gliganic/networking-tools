@@ -8,7 +8,9 @@ async def traceroute (ctx,args):
     if len(args) != 1 :
         print("Missing Required Argument")
         await ctx.channel.send(embed=CompleteEmbed("Error"
-            ,f"Missing Required Argument. \n \n You should use the **traceroute** command with domain or IPv4 or IPv6 like this : \n \n Domain: \n`.traceroute google.com` \n IPv4:\n`.traceroute 1.1.1.1`\n IPv6: \n`.traceroute 2606:4700:4700::1111`",0xFF0000))
+            ,f"Missing Required Argument. \n \n You should use the **traceroute** command with domain \
+                or IPv4 or IPv6 like this : \n \n Domain: \n`.traceroute google.com` \n IPv4:\n`.traceroute 1.1.1.1`\n \
+                    IPv6: \n`.traceroute 2606:4700:4700::1111`",0xFF0000))
         return
     
     ip=args[0]
