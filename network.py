@@ -2,7 +2,6 @@ import discord
 import yaml
 from discord.ext import commands
 from src.message import OnMessage
-import asyncio
 
 #Get the token
 with open('config/tokens.yml', 'r') as file:
