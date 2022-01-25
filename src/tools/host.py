@@ -36,7 +36,7 @@ async def host (ctx,args):
     except ErrorDuringProcess as err:
         print(f"Error code: {err.code}")
         await msg2.delete()
-        embed=discord.Embed(title="Error", description = f"➜ Host **{ip}** not found.\n \n:warning: **Error {err.code}** occured during process for **{ip}** :warning:",color=0xFF0000)
+        embed=discord.Embed(title=f"Error {err.code}", description = f"➜ Host **{ip}** not found.",color=0xFF0000)
         embed.set_thumbnail(url="https://api.alexandregliganic.fr/folder/serveur.png")
         view.add_item(item=offline)
         await ctx.channel.send(embed=embed, view=view)
