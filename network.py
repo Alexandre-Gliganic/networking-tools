@@ -10,7 +10,6 @@ with open('config/config.yml', 'r') as file:
     config = yaml.safe_load(file)
         
 bot = commands.Bot(command_prefix=config['prefix'], description = "Look at the network")
-#bot.remove_command('help')
 
 @bot.event
 async def on_ready():
