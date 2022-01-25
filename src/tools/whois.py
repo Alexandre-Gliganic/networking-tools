@@ -26,7 +26,6 @@ async def whois (ctx,args):
     
     
     version=await whatis(ip)
-    print(version)
     if version=="v4" or version == "v6" or version == "AS":
         flag="-r"
     elif version == "url":
@@ -59,7 +58,6 @@ async def whois (ctx,args):
         for line in res.splitlines()[9:]: #remove the 10 lines of information whois function 
             if not line.startswith('remarks:'): #remove comments
                 filter_res+=line+'\n'   
-        print(filter_res)
         find = filter_res.find("ERROR:101") #detect error101 for button
         if find == -1:
             view.add_item(item=online)
