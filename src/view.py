@@ -11,7 +11,6 @@ def simple_view(input: str):
         view.add_item(item=offline)
         return view
     
-
 def website_view(input: str, domaine: str = None):
     view = discord.ui.View()
     if input == "online":    
