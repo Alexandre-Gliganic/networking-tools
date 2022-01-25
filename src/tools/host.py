@@ -7,7 +7,8 @@ async def host (ctx,args):
     
     if len(args) != 1 :
         print("Missing Required Argument")
-        await ctx.channel.send(embed=CompleteEmbed("Error", "Missing Required Argument. \n \n You should use the **host** command with domain like this : \n \n Domain:\n`.host google.com`", 0xFF0000))
+        await ctx.channel.send(embed=CompleteEmbed("Error", "Missing Required Argument. \n \n You should use \
+            the **host** command with domain like this : \n \n Domain:\n`.host google.com`", 0xFF0000))
         return
     
     ip=args[0]
