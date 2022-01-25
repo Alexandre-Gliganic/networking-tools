@@ -1,7 +1,7 @@
 import discord
-from src.tools.process import *
-from src.tools.error import *
-from src.tools.regex import whatis
+from src.process import *
+from src.error import *
+from src.regex import whatis
 
 async def whois (ctx,args):
     

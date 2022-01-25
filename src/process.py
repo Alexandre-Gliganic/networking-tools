@@ -1,6 +1,6 @@
 import asyncio
 import discord
-from src.tools.error import *
+from src.error import *
 
 async def execute_prog(cmd: str,timeout: int = 10):
     """

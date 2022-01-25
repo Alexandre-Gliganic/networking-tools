@@ -1,6 +1,6 @@
 import discord
-from src.tools.process import *
-from src.tools.error import *
+from src.process import *
+from src.error import *
 
 async def host (ctx,args):
     
