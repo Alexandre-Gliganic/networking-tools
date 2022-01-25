@@ -1,9 +1,4 @@
-import discord
-from discord.ext import commands
-from discord.ext.commands import has_permissions, CheckFailure
 import yaml
-
-
 from src.tools.ping import ping
 from src.tools.traceroute import traceroute
 from src.tools.traceroute6 import traceroute6
@@ -20,7 +15,6 @@ class OnMessage:
 
         with open('config/config.yml', 'r') as file:
             config = yaml.safe_load(file)
-
 
         if ctx.content and ctx.content[0] != config['prefix']:
            return
