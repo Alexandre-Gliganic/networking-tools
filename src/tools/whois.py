@@ -8,7 +8,8 @@ async def whois (ctx,args):
     
     if len(args) != 1 :
         print("Missing Required Argument")
-        await ctx.channel.send(embed=CompleteEmbed("Error","Missing Required Argument. \n \n You should use the **whois** command with IPv4 or IPv6 like this : \n \n IPv4:\n`.whois 1.1.1.1`\n IPv6: \n`.whois 2606:4700:4700::1111`",0xFF0000))
+        await ctx.channel.send(embed=CompleteEmbed("Error","Missing Required Argument. \n \n You should use the **whois** command with IPv4 \
+            or IPv6 like this : \n \n IPv4:\n`.whois 1.1.1.1`\n IPv6: \n`.whois 2606:4700:4700::1111`",0xFF0000))
         return
     
     ip=args[0]
@@ -23,7 +24,8 @@ async def whois (ctx,args):
         flag="-r"
     else:
         await msg2.delete()
-        await ctx.channel.send(embed=CompleteEmbed("Error","Missing Required Argument. \n \n You should use the **whois** command with IPv4 or IPv6 like this : \n \n IPv4:\n`.whois 1.1.1.1`\n IPv6: \n`.whois 2606:4700:4700::1111`",0xFF0000))
+        await ctx.channel.send(embed=CompleteEmbed("Error","Missing Required Argument. \n \n You should use the **whois** command with IPv4 \
+            or IPv6 like this : \n \n IPv4:\n`.whois 1.1.1.1`\n IPv6: \n`.whois 2606:4700:4700::1111`",0xFF0000))
         return
 
     try:
@@ -36,7 +38,8 @@ async def whois (ctx,args):
     except ErrorDuringProcess as err:
         print(f"Error code: {err.code}")
         await msg2.delete()
-        await ctx.channel.send(embed=CompleteEmbed("Error",f":warning: **Error {err.code}** occured during process for **{ip}** :warning:", 0xFF0000), view=simple_view("offline"))
+        await ctx.channel.send(embed=CompleteEmbed("Error",f":warning: **Error {err.code}** occured during process \
+            for **{ip}** :warning:", 0xFF0000), view=simple_view("offline"))
         return
     
     else:
