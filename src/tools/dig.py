@@ -7,7 +7,8 @@ async def dig (ctx,args):
     
     if len(args) != 1:
         print("Missing Required Argument")
-        await ctx.channel.send(embed=CompleteEmbed("Error", "Missing Required Argument. \n \n You should use the **dig** command with IPv4 or IPv6 like this : \n \n IPv4:\n`.dig 1.1.1.1`\n IPv6: \n`.dig 2606:4700:4700::1111`", 0xFF0000))
+        await ctx.channel.send(embed=CompleteEmbed("Error", "Missing Required Argument. \n \n You should use the \
+            **dig** command with IPv4 or IPv6 like this : \n \n IPv4:\n`.dig 1.1.1.1`\n IPv6: \n`.dig 2606:4700:4700::1111`", 0xFF0000))
         return
     
     ip=args[0]
