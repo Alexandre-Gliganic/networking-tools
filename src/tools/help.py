@@ -1,4 +1,3 @@
-from msilib.schema import CompLocator
 from src.embed import *
 
 async def help (ctx):
