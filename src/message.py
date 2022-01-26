@@ -1,5 +1,6 @@
 import yaml
 from src.tools.ping import ping
+from src.tools.ping6 import ping6
 from src.tools.traceroute import traceroute
 from src.tools.traceroute6 import traceroute6
 from src.tools.whois import whois
@@ -25,6 +26,9 @@ class OnMessage:
         match command:
             case 'ping':
                 await ping(ctx, args)
+                return
+            case 'ping6':
+                await ping6(ctx, args)
                 return
             case 'traceroute':
                 await traceroute(ctx, args)
