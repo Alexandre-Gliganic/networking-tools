@@ -3,6 +3,7 @@ from src.error import *
 from src.regex import whatis
 from src.embed import *
 from src.view import *
+import os 
 
 async def whois (ctx,args):
     
@@ -22,6 +23,9 @@ async def whois (ctx,args):
     version=await whatis(ip)
     if version=="v4" or version == "v6" or version == "AS":
         flag="-r"
+    
+    elif version == "url":
+        flag=""
     else:
         await msg2.delete()
         await ctx.channel.send(embed=CompleteEmbed("Error","Missing Required Argument. \n \n You should use the **whois** command with IPv4 \
@@ -44,10 +48,29 @@ async def whois (ctx,args):
     
     else:
         filter_res = ""
-        for line in res.splitlines()[9:]: #remove the 10 lines of information whois function 
-            if not line.startswith('remarks:'): #remove comments
-                filter_res+=line+'\n'   
-        find = filter_res.find("ERROR:101") #detect error101 for button
+        if version != "url":
+            for line in res.splitlines()[9:]: #remove the 10 lines of information whois function 
+                if not line.startswith('remarks:'): #remove comments
+                    filter_res+=line+'\n'  
+        else:
+            cpt_lines=0
+            for line in res.splitlines():
+                filter_res+=line+'\n'
+                if line.startswith('source'):#remove the 10 lines of information whois function 
+                    cpt_lines+=1
+                if cpt_lines == 2:
+                    break
+            fileip=ip.replace("/","_")
+            f= open(f"files/{fileip}.txt","w")
+            f.write(filter_res)
+            f.close()
+            await msg2.delete()
+            await ctx.channel.send(file=discord.File(f"files/{fileip}.txt",filename=f"whois {fileip}.txt"))
+            os.remove(f"files/{fileip}.txt") 
+            return
+        
+        find=res.find("ERROR:") #detect error101 for button
+        print(find)
         if find == -1:
             await msg2.edit(f"```py\n{filter_res}```",view=simple_view("online"))
             return
