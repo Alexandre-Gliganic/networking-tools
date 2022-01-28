@@ -31,5 +31,9 @@ async def host (ctx,args):
         return
         
     else:
+        if len(res) == 0:
+            await msg2.delete()
+            await ctx.channel.send(embed=CompleteEmbed(f"Error",f"➜ Host **{ip}** not found.",0xFF0000), view=simple_view("offline"))
+            return    
         await msg2.edit(f"```py\n{res}```",view=simple_view("online"))
         return
