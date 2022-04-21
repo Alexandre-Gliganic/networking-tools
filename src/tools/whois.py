@@ -70,7 +70,6 @@ async def whois (ctx,args):
             return
         
         find=res.find("ERROR:") #detect error101 for button
-        print(find)
         if find == -1:
             await msg2.edit(f"```py\n{filter_res}```",view=simple_view("online"))
             return
